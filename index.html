@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SQL Query Executor</title>
+  </head>
+  <body>
+    <h1>Execute SQL Query</h1>
+    <form id="queryForm">
+      <textarea
+        id="sql"
+        rows="5"
+        cols="60"
+        placeholder="Enter your SQL query here..."
+      ></textarea
+      ><br /><br />
+      <button type="submit">Execute Query</button>
+    </form>
+    <h2>Result:</h2>
+    <pre id="result"></pre>
+
+    <script>
+      document
+        .getElementById('queryForm')
+        .addEventListener('submit', async (event) => {
+          event.preventDefault(); // Prevent the form from refreshing the page
+          const sql = document.getElementById('sql').value;
+
+          try {
+            const response = await fetch('http://localhost:3000/query', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ sql }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              document.getElementById('result').textContent = JSON.stringify(
+                result.data,
+                null,
+                2
+              );
+            } else {
+              document.getElementById('result').textContent =
+                'Error: ' + result.error;
+            }
+          } catch (error) {
+            document.getElementById('result').textContent =
+              'Error: ' + error.message;
+          }
+        });
+    </script>
+  </body>
+</html>
